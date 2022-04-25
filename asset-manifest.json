@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ZhongJunJimmy/transportation-app/static/css/main.cafaecf9.css",
+    "main.js": "/ZhongJunJimmy/transportation-app/static/js/main.fc734df8.js",
+    "static/js/787.6d420e85.chunk.js": "/ZhongJunJimmy/transportation-app/static/js/787.6d420e85.chunk.js",
+    "index.html": "/ZhongJunJimmy/transportation-app/index.html",
+    "main.cafaecf9.css.map": "/ZhongJunJimmy/transportation-app/static/css/main.cafaecf9.css.map",
+    "main.fc734df8.js.map": "/ZhongJunJimmy/transportation-app/static/js/main.fc734df8.js.map",
+    "787.6d420e85.chunk.js.map": "/ZhongJunJimmy/transportation-app/static/js/787.6d420e85.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cafaecf9.css",
+    "static/js/main.fc734df8.js"
+  ]
+}
