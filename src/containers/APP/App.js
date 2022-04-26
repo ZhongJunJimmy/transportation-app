@@ -10,6 +10,10 @@ import CardList from '../../elements/CardList/CardList';
 
 var latitude = "";
 var longitude = "";
+var getLocationIntervalTime = 60;
+var processLive = "";
+var stationInfo = [];
+
 
 var options = {
   enableHighAccuracy: true,
@@ -40,37 +44,74 @@ class App extends Component {
       geolocationState: false,
       location:{},
       stationsInfo:[
-        {
-          key:0,
-          date: "2022-04-24 23:36:00",
-          name: "測試站",
-          distance: 1230,
-          totalCNT: 10,
-          bikeCNT: 2
-        },
-        {
-          key:1,
-          date: "2022-04-24 23:36:00",
-          name: "測試站",
-          distance: 1230,
-          totalCNT: 10,
-          bikeCNT: 2
-        },
-        {
-          key:2,
-          date: "2022-04-24 23:36:00",
-          name: "測試站",
-          distance: 1230,
-          totalCNT: 10,
-          bikeCNT: 2
-        }
+        
       ]
     };
   }
+
+  distance = (lat1, lon1, lat2, lon2, unit) => {
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+        return 0;
+    }
+    else {
+        var radlat1 = Math.PI * lat1/180;
+        var radlat2 = Math.PI * lat2/180;
+        var theta = lon1-lon2;
+        var radtheta = Math.PI * theta/180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180/Math.PI;
+        dist = dist * 60 * 1.1515;
+        if (unit=="K") { dist = dist * 1.609344 }
+        if (unit=="N") { dist = dist * 0.8684 }
+        return dist;
+    }
+}
+
   
-  
+  getStation = () =>{
+    stationInfo = [];
+    const URL = 'https://tcgbusfs.blob.core.windows.net/blobyoubike/YouBikeTP.json';
+    fetch(URL)
+        .then(res => res.json())
+        .then(data => {
+            for(let i = 1;i <=405; i++){
+              let itemIdx = i.toString().padStart(4, '0');
+              if(data.retVal[itemIdx] != undefined){
+
+                let dist = this.distance(this.state.location.latitude, this.state.location.longitude, data.retVal[itemIdx].lat, data.retVal[itemIdx].lng, "K");
+
+
+                stationInfo.push({
+                  key: i,
+                  date: data.retVal[itemIdx].mday,
+                  name: data.retVal[itemIdx].sna,
+                  distance: dist,
+                  totalCNT: data.retVal[itemIdx].tot,
+                  bikeCNT: data.retVal[itemIdx].sbi,
+                  latitude: data.retVal[itemIdx].lat,
+                  longitude: data.retVal[itemIdx].lng,
+                  district: data.retVal[itemIdx].sarea
+                })
+
+                
+
+              }
+            }
+          //console.log(`data: ${JSON.stringify(stationInfo, undefined, 4)}`);
+          //console.log(stationInfo.length);
+          // If city exists, update weather details
+        })
+        .catch(err => {
+          console.log(`err: ${err}`);
+        });
+  }
   
   getLocation = () => {
+    //console.log(new Date().toLocaleTimeString());
     this.state.geolocationState=true;
     
     if ("geolocation" in navigator) {
@@ -90,33 +131,66 @@ class App extends Component {
           longitude: longitude
         }
       });
+      if(stationInfo.length > 0){
+        for(let j = 0; j < stationInfo.length; j++){
+          for(let k = j+1; k < stationInfo.length; k++){
+            if(stationInfo[k].distance < stationInfo[j].distance){
+              let temp = stationInfo[j];
+              stationInfo[j] = stationInfo[k];
+              stationInfo[k] = temp;
+            }
+          }
+        }
+  
+        var nearStation = [];
+        for(let j = 0; j < 3; j++){
+          nearStation[j] = stationInfo[j]
+        }
+        
+        this.setState({
+          stationsInfo:nearStation
+        });
+      }
+      
+      //console.log(`${this.state.location.latitude},${this.state.location.longitude}`)
+      //this.getStation();
     }
   }
 
-  getStation = () =>{
-    const URL = 'https://tcgbusfs.blob.core.windows.net/blobyoubike/YouBikeTP.json';
-    fetch(URL)
-    .then(function(response) {
-      console.log(`${JSON.stringify(response)}`);
-    })
-    .then(function(myJson) {
-      console.log(myJson);
-    });
+  
+  getLocationInfoAndStationInfo = (offset) =>{
+    this.getLocation();
+    if(this.state.geolocationState && this.state.stationsInfo.length == 0){
+      this.getStation();
+    }
+    offset = offset - 1;
+    console.log(offset);
+    if(offset <= 0){
+      offset = getLocationIntervalTime;
+      if(this.state.geolocationState){
+        this.getStation();
+      }
+    }
+
+    processLive = setTimeout(this.getLocationInfoAndStationInfo, 1000, offset);
   }
+
+
 
 
 
   render() {
+    {
+      //console.log(this.state.geolocationState);
+      (this.state.geolocationState)?console.log(`geolocationState: ${this.state.geolocationState}`):this.getLocationInfoAndStationInfo(getLocationIntervalTime)
+      
+    }
+    
     return (
       <div className={classes.AppWrapper}>
         <Header 
         color={assetMapping._colorDesc[(this.state.geolocationState)? "green":"gray"]} />
-
-        <Button name="getLocation" clicked={this.getLocation}>GPS</Button>
-        <Button name="getStation" clicked={this.getStation}>STATIONS</Button>
-        <CardList data={this.state.stationsInfo} />
-        {console.log(`${this.state.location.latitude}, ${this.state.location.longitude}`)}
-
+        <CardList data={this.state.stationsInfo}></CardList>
         <Footer />
       </div>
     );
