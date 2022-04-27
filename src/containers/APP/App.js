@@ -143,9 +143,12 @@ class App extends Component {
         }
   
         var nearStation = [];
-        for(let j = 0; j < 3; j++){
-          nearStation[j] = stationInfo[j]
+        if(stationInfo[0].distance){
+          for(let j = 0; j < 3; j++){
+            nearStation[j] = stationInfo[j]
+          }
         }
+        
         
         this.setState({
           stationsInfo:nearStation
@@ -164,7 +167,7 @@ class App extends Component {
       this.getStation();
     }
     offset = offset - 1;
-    console.log(offset);
+    //console.log(offset);
     if(offset <= 0){
       offset = getLocationIntervalTime;
       if(this.state.geolocationState){
@@ -190,7 +193,7 @@ class App extends Component {
       <div className={classes.AppWrapper}>
         <Header 
         color={assetMapping._colorDesc[(this.state.geolocationState)? "green":"gray"]} />
-        <CardList data={this.state.stationsInfo}></CardList>
+        <CardList data={this.state}></CardList>
         <Footer />
       </div>
     );

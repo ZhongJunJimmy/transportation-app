@@ -13,7 +13,7 @@ const stationInfo = (props) => {
     return(
         <div className={classes.StationInfoWrapper}>
             <div className={classes.StationDataWrapper}>
-                <Name data={props.data.name}/>
+                <Name data={props.data} currentLat={props.curLat} currentLng={props.curLng}/>
                 <Distance data={props.data.distance}/>
                 <TotalCount data={props.data.totalCNT}/>
                 <BikeCount data={props.data.bikeCNT}/>
