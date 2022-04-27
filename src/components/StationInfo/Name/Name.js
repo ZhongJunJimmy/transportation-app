@@ -6,9 +6,9 @@ const name = (props) => {
     
     return(
         <div className={classes.NameWrapper}>
-            站名：
+            站名：{props.data.name}
             <a href={url} target="_blank">
-                {props.data.name}
+                (Google Map)
             </a>
             
         </div>
