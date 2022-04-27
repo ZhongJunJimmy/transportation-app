@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/transportation-app/static/css/main.d0eb197d.css",
-    "main.js": "/transportation-app/static/js/main.2276b21f.js",
+    "main.css": "/transportation-app/static/css/main.e94ea428.css",
+    "main.js": "/transportation-app/static/js/main.66128df8.js",
     "static/js/787.6d420e85.chunk.js": "/transportation-app/static/js/787.6d420e85.chunk.js",
     "index.html": "/transportation-app/index.html",
-    "main.d0eb197d.css.map": "/transportation-app/static/css/main.d0eb197d.css.map",
-    "main.2276b21f.js.map": "/transportation-app/static/js/main.2276b21f.js.map",
+    "main.e94ea428.css.map": "/transportation-app/static/css/main.e94ea428.css.map",
+    "main.66128df8.js.map": "/transportation-app/static/js/main.66128df8.js.map",
     "787.6d420e85.chunk.js.map": "/transportation-app/static/js/787.6d420e85.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d0eb197d.css",
-    "static/js/main.2276b21f.js"
+    "static/css/main.e94ea428.css",
+    "static/js/main.66128df8.js"
   ]
 }
