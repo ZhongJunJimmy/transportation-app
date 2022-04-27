@@ -150,7 +150,7 @@ class App extends Component {
           nearStation[j] = stationInfo[j];
         }
         
-        console.log(offset);
+        //console.log(offset);
         if(nearStation[0].distance ==0 ||offset % 30 == 0){
           var origin = new window.google.maps.LatLng(latitude, longitude);
 
@@ -165,7 +165,7 @@ class App extends Component {
             destinations: [destinationA, destinationB, destinationC],
             travelMode: 'WALKING'
           }, (res)=>{
-            console.log(res);
+            //console.log(res);
             nearStation[0].distance = res.rows[0].elements[0].distance.value;
             nearStation[1].distance = res.rows[0].elements[1].distance.value;
             nearStation[2].distance = res.rows[0].elements[2].distance.value;
