@@ -91,7 +91,7 @@ class App extends Component {
                   date: data.retVal[itemIdx].mday,
                   name: data.retVal[itemIdx].sna,
                   distance: dist,
-                  totalCNT: data.retVal[itemIdx].tot,
+                  bempCNT: data.retVal[itemIdx].bemp,
                   bikeCNT: data.retVal[itemIdx].sbi,
                   latitude: data.retVal[itemIdx].lat,
                   longitude: data.retVal[itemIdx].lng,
