@@ -14,7 +14,6 @@ var getLocationIntervalTime = 60;
 var processLive = "";
 var stationInfo = [];
 
-
 var options = {
   enableHighAccuracy: true,
   timeout: 5000,
@@ -83,14 +82,15 @@ class App extends Component {
               let itemIdx = i.toString().padStart(4, '0');
               if(data.retVal[itemIdx] != undefined){
 
-                let dist = this.distance(this.state.location.latitude, this.state.location.longitude, data.retVal[itemIdx].lat, data.retVal[itemIdx].lng, "K");
-
+                let linearDist = this.distance(this.state.location.latitude, this.state.location.longitude, data.retVal[itemIdx].lat, data.retVal[itemIdx].lng, "K");
+                
 
                 stationInfo.push({
                   key: i,
                   date: data.retVal[itemIdx].mday,
                   name: data.retVal[itemIdx].sna,
-                  distance: dist,
+                  linearDistance: linearDist,
+                  distance: 0,
                   bempCNT: data.retVal[itemIdx].bemp,
                   bikeCNT: data.retVal[itemIdx].sbi,
                   latitude: data.retVal[itemIdx].lat,
@@ -111,7 +111,7 @@ class App extends Component {
         });
   }
   
-  getLocation = () => {
+  getLocation = (offset) => {
     //console.log(new Date().toLocaleTimeString());
     this.state.geolocationState=true;
     
@@ -132,28 +132,57 @@ class App extends Component {
           longitude: longitude
         }
       });
+
       if(stationInfo.length > 0){
         for(let j = 0; j < stationInfo.length; j++){
           for(let k = j+1; k < stationInfo.length; k++){
-            if(stationInfo[k].distance < stationInfo[j].distance){
+            if(stationInfo[k].linearDistance < stationInfo[j].linearDistance){
               let temp = stationInfo[j];
               stationInfo[j] = stationInfo[k];
               stationInfo[k] = temp;
             }
           }
         }
-  
-        var nearStation = [];
-        if(stationInfo[0].distance){
-          for(let j = 0; j < 3; j++){
-            nearStation[j] = stationInfo[j]
-          }
+      }
+      if(stationInfo[0].linearDistance >= 0){
+        var nearStation = [{},{},{}];
+        for(let j = 0; j < 3; j++){
+          nearStation[j] = stationInfo[j];
         }
         
+        console.log(offset);
+        if(nearStation[0].distance ==0 ||offset % 30 == 0){
+          var origin = new window.google.maps.LatLng(latitude, longitude);
+
+          var destinationA = new window.google.maps.LatLng(nearStation[0].latitude, nearStation[0].longitude);
+          var destinationB = new window.google.maps.LatLng(nearStation[1].latitude, nearStation[1].longitude);
+          var destinationC = new window.google.maps.LatLng(nearStation[2].latitude, nearStation[2].longitude);
+
+          var service = new window.google.maps.DistanceMatrixService();
+          service.getDistanceMatrix(
+          {
+            origins: [origin,origin,origin ],
+            destinations: [destinationA, destinationB, destinationC],
+            travelMode: 'WALKING'
+          }, (res)=>{
+            console.log(res);
+            nearStation[0].distance = res.rows[0].elements[0].distance.value;
+            nearStation[1].distance = res.rows[0].elements[1].distance.value;
+            nearStation[2].distance = res.rows[0].elements[2].distance.value;
+            
+            stationInfo[0].distance = res.rows[0].elements[0].distance.value;
+            stationInfo[0].distance = res.rows[0].elements[0].distance.value;
+            stationInfo[0].distance = res.rows[0].elements[0].distance.value;
+          });
         
-        this.setState({
-          stationsInfo:nearStation
-        });
+        
+        }
+        if(nearStation[0].distance >= 0 && nearStation[1].distance >= 0 && nearStation[2].distance >= 0){
+          this.setState({
+            stationsInfo:nearStation
+          });
+        }
+        
       }
       
       //console.log(`${this.state.location.latitude},${this.state.location.longitude}`)
@@ -163,7 +192,8 @@ class App extends Component {
 
   
   getLocationInfoAndStationInfo = (offset) =>{
-    this.getLocation();
+    processLive="";
+    this.getLocation(offset);
     if(this.state.geolocationState && this.state.stationsInfo.length == 0){
       this.getStation();
     }
