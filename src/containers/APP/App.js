@@ -177,6 +177,17 @@ class App extends Component {
         
         
         }
+
+        for(let j = 0; j < nearStation.length; j++){
+          for(let k = j+1; k < nearStation.length; k++){
+            if(nearStation[k].distance < nearStation[j].distance){
+              let temp = nearStation[j];
+              nearStation[j] = snearStationtationInfo[k];
+              nearStation[k] = temp;
+            }
+          }
+        }
+
         if(nearStation[0].distance >= 0 && nearStation[1].distance >= 0 && nearStation[2].distance >= 0){
           this.setState({
             stationsInfo:nearStation
