@@ -182,7 +182,7 @@ class App extends Component {
           for(let k = j+1; k < nearStation.length; k++){
             if(nearStation[k].distance < nearStation[j].distance){
               let temp = nearStation[j];
-              nearStation[j] = snearStationtationInfo[k];
+              nearStation[j] = nearStation[k];
               nearStation[k] = temp;
             }
           }
