@@ -151,7 +151,7 @@ class App extends Component {
         }
         
         //console.log(offset);
-        if(nearStation[0].distance ==0 ||offset % 30 == 0){
+        if(nearStation[0].distance ==0 ||offset % 10 == 0){
           var origin = new window.google.maps.LatLng(latitude, longitude);
 
           var destinationA = new window.google.maps.LatLng(nearStation[0].latitude, nearStation[0].longitude);
